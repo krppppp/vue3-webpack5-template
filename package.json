@@ -4,7 +4,12 @@
   "description": "vue3-webpack5-template",
   "private": true,
   "scripts": {
-    "build": "webpack"
+    "watch": "webpack --mode=development --watch",
+    "build": "webpack --mode=production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chenuin/vue3-webpack5-template.git"
   },
   "author": "chenuin",
   "license": "ISC",
