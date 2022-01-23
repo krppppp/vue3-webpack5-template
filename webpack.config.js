@@ -1,10 +1,12 @@
 const path = require('path');
-const { VueLoaderPlugin } = require('vue-loader')
+const { VueLoaderPlugin } = require('vue-loader');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
     entry: './src/index.js',
     output: {
-        filename: 'main.js',
+        filename: '[name].[contenthash].js',
         path: path.resolve(__dirname, 'dist'),
     },
     module: {
@@ -15,12 +17,20 @@ module.exports = {
             },
         ],
     },
-resolve: {
+    resolve: {
         alias: {
             vue: 'vue/dist/vue.esm-bundler.js',
         },
     },
     plugins: [
         new VueLoaderPlugin(),
+        new HtmlWebpackPlugin({
+            title: 'Getting Started',
+            template: 'template/index.html',
+            templateParameters: {
+                id: 'app',
+            },
+        }),
+        new CleanWebpackPlugin(),
     ]
 };
