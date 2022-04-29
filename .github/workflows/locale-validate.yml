@@ -1,0 +1,39 @@
+name: Locale validate
+
+on: [push]
+
+jobs:
+  verify-json-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Create schema
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const data = require('./src/i18n/locales/zh-tw.json');
+            const fs = require('fs');
+
+            const obj = {
+              type: 'object',
+              properties: Object.keys(data).reduce((carry, item) => {
+                carry[item] = {type: 'string'};
+                
+                return carry;
+              }, {}),
+              required: Object.keys(data),
+              additionalProperties: false,
+            };
+
+            fs.writeFile('./src/i18n/schema.json', JSON.stringify(obj), err => {
+              if (err) {
+                console.error(err);
+              }
+
+              console.log('Create file successfully');
+            });
+      - name: Validate JSON
+        uses: docker://orrosenblatt/validate-json-action:latest
+        env:
+          INPUT_SCHEMA: src/i18n/schema.json
+          INPUT_JSONS: src/i18n/locales/zh-tw.json,src/i18n/locales/en.json
