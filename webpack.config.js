@@ -23,6 +23,7 @@ module.exports = {
     },
     resolve: {
         alias: {
+            components: path.resolve(__dirname, 'src/components/'),
             vue: 'vue/dist/vue.esm-bundler.js',
         },
     },
