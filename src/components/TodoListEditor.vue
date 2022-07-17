@@ -2,6 +2,12 @@
     <section
         v-show="todoList.length"
         class="main">
+        <input
+            id="toggle-all"
+            v-model="allDone"
+            class="toggle-all"
+            type="checkbox">
+        <label for="toggle-all">Mark all as complete</label>
         <ul class="todo-list">
             <li                    
                 v-for="{id, value, completed}, idx in todoList"
@@ -35,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, unref } from 'vue';
+import { ref, unref, computed } from 'vue';
 
 const props = defineProps({
     todoList: {
@@ -51,6 +57,16 @@ const vFocus = (el, binding) => {
         el.focus();
     }
 };
+const allDone = computed({
+    get: () => {
+        return props.todoList.every(({completed}) => completed);
+    },
+    set: value => {
+        props.todoList.forEach((item, idx) => {
+            updateCompleteStatus(idx, value);
+        });
+    },
+});
 
 function removeTodoItem(id){
     emit('remove:todo', id);
