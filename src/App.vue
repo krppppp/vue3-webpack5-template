@@ -11,7 +11,8 @@
         </header>
         <TodoListEditor
             :todo-list="todoList"
-            @remove:todo="removeTodo" />
+            @remove:todo="removeTodo"
+            @update:todo-list="updateTodoList" />
     </section>
     <footer class="info">
         <p>Double-click to edit a todo</p>
@@ -34,6 +35,7 @@ function addTodo() {
     const item = {
         id: Date.now(),
         value: newTodo.value,
+        completed: false,
     };
 
     todoList.value.push(item);
@@ -45,6 +47,9 @@ function removeTodo(removeId) {
     const idx = todoListValue.findIndex(({id}) => removeId == id);
 
     todoListValue.splice(idx, 1);
-    todoList.value = todoListValue;
+}
+
+function updateTodoList(value) {
+    todoList.value = value;
 }
 </script>
