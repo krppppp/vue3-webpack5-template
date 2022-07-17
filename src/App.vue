@@ -1,30 +1,19 @@
 <template>
-  <div class="app">
-    <p
-      v-text="msg" />
-    <button
-      @click="addClickTimes(count)"
-      v-text="'Click'" />
-    <p
-      v-text="`Click ${pluralizeCount}`" />
-  </div>
+    <section class="todoapp">
+        <header class="header">
+			<h1>todos</h1>
+			<input
+                class="new-todo"
+                placeholder="What needs to be done?">
+		</header>
+    </section>
+    <footer class="info">
+        <p>Double-click to edit a todo</p>
+        <p>This <a href="https://todomvc.com/examples/vue/" target="_blank">TodoMVC</a> application was originally created by <a href="http://evanyou.me" target="_blank">Evan You</a>. I rewrite it with Vue3+sfc.</p>
+    </footer>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue'
-
-const msg = 'Hello World!';
-const count = ref(0);
-
-const pluralizeCount = computed(() => pluralize('time', count));
-
-function pluralize(word, count) {
-  const countValue = count.value;
-
-  return `${countValue} ${word}${countValue <= 1 ? '' : 's'}`;
-}
-
-function addClickTimes(value) {
-  count.value = value + 1
-}
-</script>
+<style scoped>
+@import 'todomvc-app-css/index.css';
+@import 'todomvc-common/base.css';
+</style>
