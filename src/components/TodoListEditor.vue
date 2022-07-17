@@ -12,7 +12,9 @@
                         type="checkbox"
                         class="toggle">
                     <label v-text="todo.value" />
-                    <button class="destroy" />
+                    <button
+                        class="destroy"
+                        @click="removeTodoItem(todo.id)" />
                 </div>
             </li>
         </ul>
@@ -26,4 +28,9 @@ const props = defineProps({
         type: Array,
     },
 });
+const emit = defineEmits(['remove:todo']);
+
+function removeTodoItem(id){
+    emit('remove:todo', id);
+}
 </script>

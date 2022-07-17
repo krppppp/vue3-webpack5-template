@@ -10,7 +10,8 @@
                 @keydown.enter="addTodo">
         </header>
         <TodoListEditor
-            :todo-list="todoList" />
+            :todo-list="todoList"
+            @remove:todo="removeTodo" />
     </section>
     <footer class="info">
         <p>Double-click to edit a todo</p>
@@ -20,7 +21,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, unref } from 'vue';
 import TodoListEditor from 'components/TodoListEditor.vue';
 
 const newTodo = ref(undefined);
@@ -37,5 +38,13 @@ function addTodo() {
 
     todoList.value.push(item);
     newTodo.value = undefined;
+}
+
+function removeTodo(removeId) {
+    const todoListValue = unref(todoList);
+    const idx = todoListValue.findIndex(({id}) => removeId == id);
+
+    todoListValue.splice(idx, 1);
+    todoList.value = todoListValue;
 }
 </script>
