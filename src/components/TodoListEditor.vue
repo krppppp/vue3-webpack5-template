@@ -4,10 +4,12 @@
         class="main">
         <input
             id="toggle-all"
-            v-model="allDone"
+            v-model="isAllTodoCompleted"
             class="toggle-all"
             type="checkbox">
-        <label for="toggle-all">Mark all as complete</label>
+        <label for="toggle-all">
+            Mark all as complete
+        </label>
         <ul class="todo-list">
             <li                    
                 v-for="{id, value, completed}, idx in todoList"
@@ -38,6 +40,20 @@
             </li>
         </ul>
     </section>
+    <footer
+        v-show="todoList.length"
+        class="footer">
+        <span class="todo-count">
+            <strong v-text="remaining" />
+            {{ pluralize('item', remaining) }} left
+        </span>
+        <button
+            v-show="todoList.length > remaining"
+            class="clear-completed"
+            @click="removeCompletedTodo">
+            Clear completed
+        </button>
+    </footer>
 </template>
 
 <script setup>
@@ -57,7 +73,7 @@ const vFocus = (el, binding) => {
         el.focus();
     }
 };
-const allDone = computed({
+const isAllTodoCompleted = computed({
     get: () => {
         return props.todoList.every(({completed}) => completed);
     },
@@ -67,6 +83,11 @@ const allDone = computed({
         });
     },
 });
+const remaining = computed(() => props.todoList.filter(({completed}) => !completed).length);
+
+function pluralize(word, count) {
+    return word + (count <= 1 ? '' : 's');
+}
 
 function removeTodoItem(id){
     emit('remove:todo', id);
@@ -107,5 +128,11 @@ function saveTodoItem() {
 
 function cancelEdit() {
     setEditTodo(undefined, undefined);
+}
+
+function removeCompletedTodo() {
+    const todoList = props.todoList;
+
+    emit('update:todo-list', todoList.filter(({completed}) => !completed));
 }
 </script>
