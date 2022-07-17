@@ -21,7 +21,7 @@
                         type="checkbox"
                         class="toggle"
                         :checked="completed"
-                        @input="updateCompleteStatus(idx, !completed)">
+                        @input="updateCompleteStatus(id, !completed)">
                     <label
                         @dblclick="setEditTodo(idx, value)"
                         v-text="value" />
@@ -34,7 +34,7 @@
                     v-focus="idx == editIdx"
                     class="edit"
                     type="text"
-                    @blur="saveTodoItem"
+                    @blur="saveTodoItem(id)"
                     @keydown.enter="$event.target.blur()"
                     @keydown.esc="cancelEdit">
             </li>
@@ -65,7 +65,7 @@ const props = defineProps({
         type: Array,
     },
 });
-const emit = defineEmits(['remove:todo', 'update:todo-list']);
+const emit = defineEmits(['remove:todo', 'update:todo']);
 const editTodo = ref(undefined);
 const editIdx = ref(undefined);
 const vFocus = (el, binding) => {
@@ -73,17 +73,15 @@ const vFocus = (el, binding) => {
         el.focus();
     }
 };
+const remaining = computed(() => props.todoList.filter(({completed}) => !completed).length);
 const isAllTodoCompleted = computed({
-    get: () => {
-        return props.todoList.every(({completed}) => completed);
-    },
+    get: () => (unref(remaining) === 0),
     set: value => {
-        props.todoList.forEach((item, idx) => {
-            updateCompleteStatus(idx, value);
+        props.todoList.forEach(({id}) => {
+            updateCompleteStatus(id, value);
         });
     },
 });
-const remaining = computed(() => props.todoList.filter(({completed}) => !completed).length);
 
 function pluralize(word, count) {
     return word + (count <= 1 ? '' : 's');
@@ -98,23 +96,11 @@ function setEditTodo(idx, value) {
     editTodo.value = value;
 }
 
-function getUpdateTodoList(idx, value) {
-    const todoList = props.todoList;
-    const item = todoList[idx];
-
-    todoList[idx] = {
-        ...item,
-        ...value,
-    };
-
-    return todoList;
+function updateCompleteStatus(id, completed) {
+    emit('update:todo', id, {completed});
 }
 
-function updateCompleteStatus(idx, completed) {
-    emit('update:todo-list', getUpdateTodoList(idx, {completed}));
-}
-
-function saveTodoItem() {
+function saveTodoItem(id) {
     const idx = unref(editIdx);
     const value = unref(editTodo);
 
@@ -122,7 +108,7 @@ function saveTodoItem() {
         return;
     }
 
-    emit('update:todo-list', getUpdateTodoList(idx, {value}));
+    emit('update:todo', id, {value});
     setEditTodo(undefined, undefined);
 }
 
@@ -131,8 +117,10 @@ function cancelEdit() {
 }
 
 function removeCompletedTodo() {
-    const todoList = props.todoList;
+    const completedList = props.todoList.filter(({completed}) => completed);
 
-    emit('update:todo-list', todoList.filter(({completed}) => !completed));
+    completedList.forEach(({id}) => {
+        removeTodoItem(id);
+    });
 }
 </script>

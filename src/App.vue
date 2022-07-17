@@ -12,7 +12,7 @@
         <TodoListEditor
             :todo-list="todoList"
             @remove:todo="removeTodo"
-            @update:todo-list="updateTodoList" />
+            @update:todo="updateTodo" />
     </section>
     <footer class="info">
         <p>Double-click to edit a todo</p>
@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { ref, unref } from 'vue';
+import { ref, unref, computed } from 'vue';
 import TodoListEditor from 'components/TodoListEditor.vue';
 
 const newTodo = ref(undefined);
@@ -30,11 +30,24 @@ const todoList = ref([]);
 const vFocus = {
     mounted: el => el.focus(),
 };
+const todoIndexMap = computed(() => (
+    unref(todoList).reduce((carry, {id}, idx) => {
+        carry[id] = idx;
+
+        return carry;
+    }, {})
+));
 
 function addTodo() {
+    const newTodoValue = unref(newTodo);
+    
+    if (!newTodoValue) {
+        return;
+    }
+
     const item = {
         id: Date.now(),
-        value: newTodo.value,
+        value: newTodoValue,
         completed: false,
     };
 
@@ -42,14 +55,17 @@ function addTodo() {
     newTodo.value = undefined;
 }
 
-function removeTodo(removeId) {
+function removeTodo(id) {
     const todoListValue = unref(todoList);
-    const idx = todoListValue.findIndex(({id}) => removeId == id);
+    // const idx = todoListValue.findIndex(({id}) => removeId == id);
 
-    todoListValue.splice(idx, 1);
+    todoListValue.splice(unref(todoIndexMap)[id], 1);
 }
 
-function updateTodoList(value) {
-    todoList.value = value;
+function updateTodo(id, obj) {
+    const todoListValue = unref(todoList);
+    const idx = unref(todoIndexMap)[id];
+
+    todoListValue[idx] = Object.assign(todoListValue[idx], obj);
 }
 </script>
