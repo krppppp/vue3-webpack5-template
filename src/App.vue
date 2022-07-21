@@ -26,7 +26,7 @@ import { ref, unref, computed } from 'vue';
 import TodoListEditor from 'components/TodoListEditor.vue';
 
 const newTodo = ref(undefined);
-const todoList = ref([]);
+const todoList = ref(JSON.parse(localStorage.getItem('todo')) || []);
 const vFocus = {
     mounted: el => el.focus(),
 };
@@ -53,12 +53,14 @@ function addTodo() {
 
     todoList.value.push(item);
     newTodo.value = undefined;
+    saveToLocalStorage(todoList);
 }
 
 function removeTodo(id) {
     const todoListValue = unref(todoList);
 
     todoListValue.splice(unref(todoIndexMap)[id], 1);
+    saveToLocalStorage(todoList);
 }
 
 function updateTodo(id, obj) {
@@ -66,5 +68,10 @@ function updateTodo(id, obj) {
     const idx = unref(todoIndexMap)[id];
 
     todoListValue[idx] = Object.assign(todoListValue[idx], obj);
+    saveToLocalStorage(todoList);
+}
+
+function saveToLocalStorage(data) {
+    localStorage.setItem('todo', JSON.stringify(unref(data)));
 }
 </script>
