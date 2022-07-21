@@ -12,7 +12,7 @@
         </label>
         <ul class="todo-list">
             <li                    
-                v-for="{id, value, completed}, idx in todoList"
+                v-for="{id, value, completed}, idx in filteredTodoList"
                 :key="id"
                 :class="{completed, editing: idx == editIdx}"
                 class="todo">
@@ -47,6 +47,17 @@
             <strong v-text="remaining" />
             {{ pluralize('item', remaining) }} left
         </span>
+        <ul class="filters">
+            <li
+                v-for="filter in Filter.enums"
+                :key="filter.value">
+                <a
+                    :href="`#${filter.key}`"
+                    :class="{selected: visibility === filter}">
+                    {{ filter.key.toUpperCase() }}
+                </a>
+            </li>
+        </ul>
         <button
             v-show="todoList.length > remaining"
             class="clear-completed"
@@ -57,7 +68,12 @@
 </template>
 
 <script setup>
-import { ref, unref, computed } from 'vue';
+import {
+    ref, unref, computed,
+    onMounted,
+} from 'vue';
+import {Filter} from 'enums/Filter';
+import {filterMap} from 'maps/Filter';
 
 const props = defineProps({
     todoList: {
@@ -82,6 +98,32 @@ const isAllTodoCompleted = computed({
         });
     },
 });
+const visibility = ref(undefined);
+const filteredTodoList = computed(() => {
+    const visibilityValue = unref(visibility);
+    const todoList = props.todoList;
+
+    return visibilityValue ?
+        filterMap.get(visibilityValue)(todoList) :
+        todoList;
+});
+
+onMounted(() => {
+    changeVisibility();
+});
+
+window.addEventListener('hashchange', changeVisibility);
+
+function changeVisibility() {
+    const value = window.location.hash.slice(1);
+    const enumItem = Filter.get(value);
+
+    if (!enumItem) {
+        window.location.hash = '';
+    }
+
+    visibility.value = enumItem;
+}
 
 function pluralize(word, count) {
     return word + (count <= 1 ? '' : 's');

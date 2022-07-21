@@ -57,7 +57,6 @@ function addTodo() {
 
 function removeTodo(id) {
     const todoListValue = unref(todoList);
-    // const idx = todoListValue.findIndex(({id}) => removeId == id);
 
     todoListValue.splice(unref(todoIndexMap)[id], 1);
 }
