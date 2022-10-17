@@ -1,4 +1,4 @@
-import {Filter} from 'enums/Filter';
+import {Filter} from '@/enums/Filter';
 
 export const filterMap = new Map()
     .set(

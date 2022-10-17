@@ -72,8 +72,8 @@ import {
     ref, unref, computed,
     onMounted,
 } from 'vue';
-import {Filter} from 'enums/Filter';
-import {filterMap} from 'maps/Filter';
+import {Filter} from '@/enums/Filter';
+import {filterMap} from '@/maps/Filter';
 
 const props = defineProps({
     todoList: {

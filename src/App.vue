@@ -1,7 +1,7 @@
 <template>
     <section class="todoapp">
         <header class="header">
-            <h1>todos</h1>
+            <h1 style="font-size: 20px;top: -50px;">Vue3 + VueCliServer + Webpack5 </h1>
             <input
                 v-model="newTodo"
                 v-focus
@@ -14,16 +14,11 @@
             @remove:todo="removeTodo"
             @update:todo="updateTodo" />
     </section>
-    <footer class="info">
-        <p>Double-click to edit a todo</p>
-        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <p>This <a href="https://todomvc.com/examples/vue/" target="_blank">TodoMVC</a> application was originally created by <a href="http://evanyou.me" target="_blank">Evan You</a>. I rewrite it with Vue3+sfc.</p>
-    </footer>
 </template>
 
 <script setup>
 import { ref, unref, computed } from 'vue';
-import TodoListEditor from 'components/TodoListEditor.vue';
+import TodoListEditor from '@/components/TodoListEditor';
 
 const newTodo = ref(undefined);
 const todoList = ref(JSON.parse(localStorage.getItem('todo')) || []);

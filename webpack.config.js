@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-    entry: './src/index.js',
+    entry: './src/main.js',
     output: {
         filename: '[name].[contenthash].js',
         path: path.resolve(__dirname, 'dist'),
@@ -27,13 +27,17 @@ module.exports = {
             enums: path.resolve(__dirname, 'src/enums/'),
             maps: path.resolve(__dirname, 'src/maps/'),
             vue: 'vue/dist/vue.esm-bundler.js',
+            '@': path.resolve(__dirname, 'src/'),
         },
+        extensions: [
+            '.ts', '.js', '.vue',
+        ],
     },
     plugins: [
         new VueLoaderPlugin(),
         new HtmlWebpackPlugin({
             title: 'Getting Started',
-            template: 'template/index.html',
+            template: 'public/index.html',
             templateParameters: {
                 id: 'app',
             },
